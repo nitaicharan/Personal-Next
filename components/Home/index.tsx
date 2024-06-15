@@ -1,5 +1,4 @@
-import { useArticles } from "@/components/hooks/useArticles";
-import Feed from "./Feed";
+import Feed from "./Feeds/Feed";
 
 type FeedsProps = {
   articles: any[];
