@@ -1,6 +1,6 @@
-import Feeds from "@/components/Home";
-import TopNavLayout from "./components/layouts/TopNavLayout";
-import { useArticles } from "./hooks/useArticles";
+import TopNavLayout from "@/lib/components/layouts/TopNavLayout";
+import { useArticles } from "@/lib/hooks/useArticles";
+import Feeds from "./Home";
 
 export default async function Home() {
   const page = await useArticles();
