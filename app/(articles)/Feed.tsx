@@ -1,35 +1,34 @@
+import { Article } from "@/@types/article";
 import Image from "next/image";
+import Link from "next/link";
 
 type FeedProps = {
-  article: any;
+  article: Article;
 };
 
 export default function Feed({ article }: FeedProps) {
   return (
     <div className="article-preview">
       <div className="article-meta">
-        <a href="/profile/eric-simons">
+        <Link href={`/profile/${article.author.username}`}>
           <Image
             width={32}
             height={32}
             alt="Conduit logo"
-            src="http://i.imgur.com/Qr71crq.jpg"
+            src={article.author.image}
           />
-        </a>
+        </Link>
         <div className="info">
-          <a href="/profile/eric-simons" className="author">
-            {article.name}
+          <a href={`/profile/${article.author.username}`} className="author">
+            {article.title}
           </a>
-          <span className="date">January 20th</span>
+          <span className="date">{article.createdAt}</span>
         </div>
         <button className="btn btn-outline-primary btn-sm pull-xs-right">
-          <i className="ion-heart"></i> 29
+          <i className="ion-heart"></i> {article.favoritesCount}
         </button>
       </div>
-      <a
-        href="/article/how-to-build-webapps-that-scale"
-        className="preview-link"
-      >
+      <Link href={`/article/${article.slug}`} className="preview-link">
         <h1>{article.title}</h1>
         <p>{article.body}</p>
         <span>Read more...</span>
@@ -38,7 +37,7 @@ export default function Feed({ article }: FeedProps) {
             <li className="tag-default tag-pill tag-outline">{tag}</li>
           ))}
         </ul>
-      </a>
+      </Link>
     </div>
   );
 }

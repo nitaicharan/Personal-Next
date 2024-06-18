@@ -3,7 +3,8 @@ import { useArticles } from "@/lib/hooks/useArticles";
 import Feed from "./Feed";
 
 export default async function ArticlesPage() {
-  const page = await useArticles();
+  const { list } = useArticles();
+  const page = await list();
 
   return (
     <TopNavLayout>
@@ -33,7 +34,7 @@ export default async function ArticlesPage() {
                 </ul>
               </div>
 
-              {page.articles?.map((i) => <Feed article={i} />)}
+              {page?.articles?.map((i) => <Feed article={i} />)}
 
               <ul className="pagination">
                 <li className="page-item active">
