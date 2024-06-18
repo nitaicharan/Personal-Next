@@ -22,7 +22,9 @@ export default function Feed({ article }: FeedProps) {
           <a href={`/profile/${article.author.username}`} className="author">
             {article.title}
           </a>
-          <span className="date">{article.createdAt}</span>
+          <span className="date">
+            {new Date(article?.createdAt || "").toLocaleDateString()}{" "}
+          </span>
         </div>
         <button className="btn btn-outline-primary btn-sm pull-xs-right">
           <i className="ion-heart"></i> {article.favoritesCount}

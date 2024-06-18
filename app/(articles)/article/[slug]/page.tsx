@@ -1,11 +1,27 @@
-import React from "react";
-import Head from "next/head";
+"use client";
 
-export default async function ArticlePage() {
+import React, { useEffect, useState } from "react";
+import Head from "next/head";
+import { useParams } from "next/navigation";
+import { useArticles } from "@/lib/hooks/useArticles";
+import { Article } from "@/@types/article";
+
+export default function ArticlePage() {
+  const { slug } = useParams<{ slug: string }>();
+  const { get } = useArticles();
+  const [article, setArticle] = useState<Article | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { article: response } = await get(slug);
+      setArticle(response);
+    })();
+  }, []);
+
   return (
     <div className="article-page">
       <Head>
-        <title>How to build webapps that scale</title>
+        <title>{article?.title}</title>
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"
@@ -13,26 +29,38 @@ export default async function ArticlePage() {
       </Head>
       <div className="banner">
         <div className="container">
-          <h1>How to build webapps that scale</h1>
+          <h1>{article?.title}</h1>
 
           <div className="article-meta">
-            <a href="/profile/eric-simons">
-              <img src="http://i.imgur.com/Qr71crq.jpg" alt="Eric Simons" />
+            <a href={`/profile/${article?.author?.username}`}>
+              <img
+                src={article?.author?.image}
+                alt={article?.author?.username}
+              />
             </a>
             <div className="info">
-              <a href="/profile/eric-simons" className="author">
-                Eric Simons
+              <a
+                href={`/profile/${article?.author?.username}`}
+                className="author"
+              >
+                {article?.author?.username}
               </a>
-              <span className="date">January 20th</span>
+              <span className="date">
+                {new Date(article?.createdAt || "").toLocaleDateString()}
+              </span>
             </div>
             <button className="btn btn-sm btn-outline-secondary">
               <i className="ion-plus-round"></i>
-              &nbsp; Follow Eric Simons <span className="counter">(10)</span>
+              &nbsp; Follow {article?.author?.username}{" "}
+              <span className="counter">
+                ({article?.author?.following ? "Unfollow" : "Follow"})
+              </span>
             </button>
             &nbsp;&nbsp;
             <button className="btn btn-sm btn-outline-primary">
               <i className="ion-heart"></i>
-              &nbsp; Favorite Post <span className="counter">(29)</span>
+              &nbsp; Favorite Post{" "}
+              <span className="counter">({article?.favoritesCount})</span>
             </button>
             <button className="btn btn-sm btn-outline-secondary">
               <i className="ion-edit"></i> Edit Article
@@ -47,17 +75,13 @@ export default async function ArticlePage() {
       <div className="container page">
         <div className="row article-content">
           <div className="col-md-12">
-            <p>
-              Web development technologies have evolved at an incredible clip
-              over the past few years.
-            </p>
-            <h2 id="introducing-ionic">Introducing RealWorld.</h2>
-            <p>It's a great solution for learning how other frameworks work.</p>
+            <p>{article?.body}</p>
             <ul className="tag-list">
-              <li className="tag-default tag-pill tag-outline">realworld</li>
-              <li className="tag-default tag-pill tag-outline">
-                implementations
-              </li>
+              {article?.tagList?.map((tag) => (
+                <li key={tag} className="tag-default tag-pill tag-outline">
+                  {tag}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -66,23 +90,30 @@ export default async function ArticlePage() {
 
         <div className="article-actions">
           <div className="article-meta">
-            <a href="profile.html">
-              <img src="http://i.imgur.com/Qr71crq.jpg" alt="Eric Simons" />
+            <a href={`/profile/${article?.author?.username}`}>
+              <img
+                src={article?.author?.image}
+                alt={article?.author?.username}
+              />
             </a>
             <div className="info">
-              <a href="" className="author">
-                Eric Simons
+              <a
+                href={`/profile/${article?.author?.username}`}
+                className="author"
+              >
+                {article?.author?.username}
               </a>
-              <span className="date">January 20th</span>
+              <span className="date">{article?.createdAt}</span>
             </div>
             <button className="btn btn-sm btn-outline-secondary">
               <i className="ion-plus-round"></i>
-              &nbsp; Follow Eric Simons
+              &nbsp; Follow {article?.author?.username}
             </button>
             &nbsp;
             <button className="btn btn-sm btn-outline-primary">
               <i className="ion-heart"></i>
-              &nbsp; Favorite Article <span className="counter">(29)</span>
+              &nbsp; Favorite Article{" "}
+              <span className="counter">({article?.favoritesCount})</span>
             </button>
             <button className="btn btn-sm btn-outline-secondary">
               <i className="ion-edit"></i> Edit Article
@@ -105,7 +136,7 @@ export default async function ArticlePage() {
               </div>
               <div className="card-footer">
                 <img
-                  src="http://i.imgur.com/Qr71crq.jpg"
+                  src={article?.author?.image}
                   className="comment-author-img"
                   alt="Author"
                 />
@@ -113,29 +144,7 @@ export default async function ArticlePage() {
               </div>
             </form>
 
-            <div className="card">
-              <div className="card-block">
-                <p className="card-text">
-                  With supporting text below as a natural lead-in to additional
-                  content.
-                </p>
-              </div>
-              <div className="card-footer">
-                <a href="/profile/author" className="comment-author">
-                  <img
-                    src="http://i.imgur.com/Qr71crq.jpg"
-                    className="comment-author-img"
-                    alt="Author"
-                  />
-                </a>
-                &nbsp;
-                <a href="/profile/jacob-schmidt" className="comment-author">
-                  Jacob Schmidt
-                </a>
-                <span className="date-posted">Dec 29th</span>
-              </div>
-            </div>
-
+            {/* Example comment, this should be dynamically loaded */}
             <div className="card">
               <div className="card-block">
                 <p className="card-text">
@@ -161,6 +170,7 @@ export default async function ArticlePage() {
                 </span>
               </div>
             </div>
+            {/* End of example comment */}
           </div>
         </div>
       </div>
