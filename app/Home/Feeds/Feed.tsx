@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 type FeedProps = {
   article: any;
 };
@@ -7,7 +9,12 @@ export default function Feed({ article }: FeedProps) {
     <div className="article-preview">
       <div className="article-meta">
         <a href="/profile/eric-simons">
-          <img src="http://i.imgur.com/Qr71crq.jpg" />
+          <Image
+            width={32}
+            height={32}
+            alt="Conduit logo"
+            src="http://i.imgur.com/Qr71crq.jpg"
+          />
         </a>
         <div className="info">
           <a href="/profile/eric-simons" className="author">
